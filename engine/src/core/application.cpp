@@ -3,6 +3,8 @@
 #include "logger.hpp"
 #include "window.hpp"
 
+#include <utils/irl_general_allocator.hpp>
+
 struct application_state {
     game* game_inst;
     bool is_running;
@@ -50,6 +52,8 @@ bool application_create(game* game_inst)
     return true;
 }
 
+#include <vector>
+
 bool application_run() 
 {
     while (app_state.is_running) 
@@ -73,6 +77,9 @@ bool application_run()
             }
         }
     }
+
+    if(get_general_allocationsNow() > 0)
+        CORE_LOG_WARN("Forger to deallocate smth");
 
     app_state.is_running = false;
 	
