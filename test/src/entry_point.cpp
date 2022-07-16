@@ -1,6 +1,5 @@
 #include "game.hpp"
 #include <entry_point.hpp>
-#include <platform/window.hpp>
 
 // Define the function to create a game
 bool create_game(game* out_game) {

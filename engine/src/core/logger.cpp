@@ -11,15 +11,22 @@ std::shared_ptr<spdlog::logger> getClientLogger() { return clientLogger; }
 
 void initLogger() 
 {
-	if(isInitialized)
+	if(!isInitialized)
 	{
-		CORE_LOG_WARN("Logger is allready initialized"); return;
+		spdlog::set_pattern("%^[%T] %n: %v%$");
+		coreLogger = spdlog::stdout_color_mt("IrlEngine");
+		coreLogger->set_level(spdlog::level::trace);
+		clientLogger = spdlog::stdout_color_mt("Application");
+		clientLogger->set_level(spdlog::level::trace);
 	}
-
-	spdlog::set_pattern("%^[%T] %n: %v%$");
-	coreLogger = spdlog::stdout_color_mt("IrlEngine");
-	coreLogger->set_level(spdlog::level::trace);
-	clientLogger = spdlog::stdout_color_mt("Application");
-	clientLogger->set_level(spdlog::level::trace);
+	else
+	{
+		CORE_LOG_WARN("Logger is allready initialized");
+	}
 }
 
+void shutdownLogger()
+{
+	coreLogger.reset();
+	clientLogger.reset();
+}

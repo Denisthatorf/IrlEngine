@@ -10,7 +10,6 @@ find_package(glm REQUIRED)
 
 target_include_directories(Engine
     PUBLIC
-        "/vendor/spdlog/include"
         ${CMAKE_SOURCE_DIR}/vendor/spdlog/include
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src

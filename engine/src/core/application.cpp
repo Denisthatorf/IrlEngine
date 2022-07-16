@@ -1,8 +1,7 @@
 #include "application.hpp"
 #include "game_types.hpp"
 #include "logger.hpp"
-
-#include "platform/window.hpp"
+#include "window.hpp"
 
 struct application_state {
     game* game_inst;
@@ -78,6 +77,7 @@ bool application_run()
     app_state.is_running = false;
 	
 	destroyWindow();
+	shutdownLogger();
 
     return true;
 } 

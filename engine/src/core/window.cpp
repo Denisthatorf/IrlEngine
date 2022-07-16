@@ -8,8 +8,9 @@
 
 static GLFWwindow* window;
 
-bool initWindow(int width, int height, const char* application_name)
-{
+bool initWindow(int width, int height, const char* application_name) {
+    bool isInited = true;
+
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -17,11 +18,13 @@ bool initWindow(int width, int height, const char* application_name)
 
     window = glfwCreateWindow(width, height, application_name, NULL, NULL);
 
-	return window != nullptr;
+    if(window == nullptr)
+        isInited = false;
+
+	return isInited;
 }
 
-bool pollWindowEvents()
-{
+bool pollWindowEvents() {
     if(!glfwWindowShouldClose(window))
     {         
         glfwPollEvents();
@@ -30,9 +33,9 @@ bool pollWindowEvents()
     return false;    
 }
 
-void destroyWindow()
-{
+void destroyWindow() {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
+
 #endif

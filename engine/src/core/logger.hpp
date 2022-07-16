@@ -5,6 +5,7 @@
 #include <spdlog/spdlog.h>
 
 void initLogger();
+void shutdownLogger();
 
 IRL_API std::shared_ptr<spdlog::logger> getCoreLogger();
 IRL_API std::shared_ptr<spdlog::logger> getClientLogger();
