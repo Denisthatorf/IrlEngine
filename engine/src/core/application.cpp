@@ -1,12 +1,13 @@
 #include "application.hpp"
 #include "game_types.hpp"
 #include "logger.hpp"
-#include "window.hpp"
 
+#include <platform/window.hpp>
 #include <utils/irl_general_allocator.hpp>
 
 struct application_state {
     game* game_inst;
+	window app_window;
     bool is_running;
     bool is_suspended;
     //platform_state platform;
@@ -33,9 +34,13 @@ bool application_create(game* game_inst)
     app_state.is_suspended = false;
 	
     initLogger();
-	if(!initWindow(game_inst->app_config.start_width,
-			game_inst->app_config.start_height,
-			game_inst->app_config.name))
+	if(!window_create(
+			&app_state.app_window,
+			game_inst->app_config.name,
+			game_inst->app_config.start_pos_x,
+			game_inst->app_config.start_pos_y,
+			game_inst->app_config.start_width,
+			game_inst->app_config.start_height))
 	{
 		CORE_LOG_CRITICAL("Can't init window");
 		return false;
@@ -52,13 +57,11 @@ bool application_create(game* game_inst)
     return true;
 }
 
-#include <vector>
-
 bool application_run() 
 {
     while (app_state.is_running) 
     {
-        if(!pollWindowEvents()) {
+        if(!window_pollWindowEvents(&app_state.app_window)) {
             app_state.is_running = false;
         }
 
@@ -83,7 +86,7 @@ bool application_run()
 
     app_state.is_running = false;
 	
-	destroyWindow();
+	window_destroy(&app_state.app_window);
 	shutdownLogger();
 
     return true;

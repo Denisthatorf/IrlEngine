@@ -1,17 +1,17 @@
 #pragma once
 #include <functional>
 
-#include <defines.hpp>
-#include <core/application.hpp>
+#include "defines.hpp"
+#include "core/application.hpp"
 
 struct game 
 {
 	application_config app_config;
 	
-    std::function<bool(game* game_inst)> initialize;
-    std::function<bool(game* game_inst, float delta_time)> update;
-    std::function<bool(game* game_inst, float delta_time)> render;
-	std::function<void(game* game_inst, uint32_t width, uint32_t height)> on_resize;	
+    bool (*initialize) (game* game_inst);
+    bool (*update) (game* game_inst, float delta_time);
+    bool (*render) (game* game_inst, float delta_time);
+	void (*on_resize) (game* game_inst, uint32_t width, uint32_t height);	
 };
 
 //application_config app_config;

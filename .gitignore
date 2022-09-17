@@ -4,3 +4,5 @@ compile_commands.json
 build
 Debug
 neovim.json
+.cache
+.ccls-cache
