@@ -1,9 +1,17 @@
 #include "application.hpp"
 #include "game_types.hpp"
-#include "logger.hpp"
+
+#include <core/logger.hpp>
+#include <core/app_clock.hpp>
 
 #include <platform/window.hpp>
-#include <utils/irl_general_allocator.hpp>
+#include <platform/platform.hpp>
+
+#include <core/app_clock.hpp>
+#include <renderer/renderer_frontend.hpp>
+
+//TODO: think more
+//#include <utils/irl_general_allocator.hpp>
 
 struct application_state {
     game* game_inst;
@@ -13,7 +21,8 @@ struct application_state {
     //platform_state platform;
     int16_t width;
     int16_t height;
-    float last_time;
+    double last_time;
+	app_clock clock;	
 };
 
 static bool isInitialized = false;
@@ -46,6 +55,11 @@ bool application_create(game* game_inst)
 		return false;
 	}
 
+    if (!renderer_initialize(game_inst->app_config.name, &app_state.app_window)) {
+        CORE_LOG_CRITICAL("Failed to initialize renderer. Aborting application.");
+        return false;
+    }
+
     // Initialize the game.
     if (!app_state.game_inst->initialize(app_state.game_inst)) {
         CORE_LOG_CRITICAL("Game failed to initialize.");
@@ -59,30 +73,67 @@ bool application_create(game* game_inst)
 
 bool application_run() 
 {
+	app_state.clock.start();	
+	app_state.clock.update();
+	app_state.last_time = app_state.clock.elapsed;
+	double running_time = 0;
+	double frame_count = 0;
+	double target_frame_seconds = 1.0f / 60;
+
     while (app_state.is_running) 
     {
+		app_state.clock.update();
+        double current_time = app_state.clock.elapsed;
+        double delta = (current_time - app_state.last_time);
+        double frame_start_time = platform_get_absolute_time();
+
         if(!window_pollWindowEvents(&app_state.app_window)) {
             app_state.is_running = false;
         }
 
-        if(!app_state.is_suspended) {
-            if (!app_state.game_inst->update(app_state.game_inst, (float)0)) {
+        if(!app_state.is_suspended)
+		{
+            if (!app_state.game_inst->update(app_state.game_inst, delta)) 
+			{
                 CORE_LOG_CRITICAL("Game update failed, shutting down.");
                 app_state.is_running = false;
                 break;
             }
 
-            // Call the game's render routine.
-            if (!app_state.game_inst->render(app_state.game_inst, (float)0)) {
+            if (!app_state.game_inst->render(app_state.game_inst, delta))
+			{
                 CORE_LOG_CRITICAL("Game render failed, shutting down.");
                 app_state.is_running = false;
                 break;
             }
+
+			double frame_end_time = platform_get_absolute_time();
+            double frame_elapsed_time = frame_end_time - frame_start_time;
+            running_time += frame_elapsed_time;
+            double remaining_seconds = target_frame_seconds - frame_elapsed_time;
+
+            if (remaining_seconds > 0) 
+			{
+                uint64_t remaining_ms = (remaining_seconds * 1000);
+
+                // If there is time left, give it back to the OS.
+                bool limit_frames = false;
+                if (remaining_ms > 0 && limit_frames)
+				{
+                    platform_sleep(remaining_ms - 1);
+                }
+
+                frame_count++;
+            }
+
+			//TODO: update input
+			app_state.last_time = current_time;
         }
     }
 
-    if(get_general_allocationsNow() > 0)
-        CORE_LOG_WARN("Forger to deallocate smth");
+	//TODO: check allocations
+    //if(get_general_allocationsNow() > 0)
+    //    CORE_LOG_WARN("Forger to deallocate smth");
 
     app_state.is_running = false;
 	

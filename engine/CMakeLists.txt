@@ -21,6 +21,7 @@ target_link_libraries(Engine
         glm
     PRIVATE
         glfw
+        Vulkan::Vulkan
 )
 
 #set_property(TARGET Engine PROPERTY CXX_STANDARD 17)
