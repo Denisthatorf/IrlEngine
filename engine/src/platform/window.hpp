@@ -2,6 +2,7 @@
 #include <defines.hpp>
 
 //TODO: use platform dependent windows
+//TODO: thind about precompilation define for struct members
 //TODO: think about using abstract window class if needed
 
 struct window
