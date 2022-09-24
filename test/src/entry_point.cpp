@@ -14,9 +14,6 @@ bool create_game(game* out_game) {
     out_game->initialize = game_initialize;
     out_game->on_resize = game_on_resize;
 
-     std::function<bool(game* game_inst)> initialize =  game_initialize;
-    auto res = initialize(out_game);
-    // Create the game state.
     //out_game->state = platform_allocate(sizeof(game_state), FALSE);
 
     return true;

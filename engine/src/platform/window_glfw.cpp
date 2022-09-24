@@ -1,10 +1,13 @@
 #include "window.hpp"
+#include <cstdint>
 
-//#define GLFW_INCLUDE_VULKAN
+#ifdef USE_GLFW
 
+#include <cstdlib>
+#include <renderer/vulkan/vulkan_platform.hpp>
+
+#define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
-
-#include <utils/event.hpp>
 
 struct internal_state {
 	GLFWwindow* glfw_window;
@@ -27,7 +30,7 @@ bool window_create(
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    state->glfw_window = glfwCreateWindow(width, height, application_name, NULL, NULL);
+    state->glfw_window = glfwCreateWindow(width, height, application_name, NULL, nullptr);
 
 	//TODO: set window callback
     if(state->glfw_window == nullptr)
@@ -53,3 +56,14 @@ void window_destroy(window* window) {
     glfwDestroyWindow(state->glfw_window);
     glfwTerminate();
 }
+
+void window_get_required_extension_names(std::vector<const char*>& names) {
+    uint32_t count;
+    const char** extensions = glfwGetRequiredInstanceExtensions(&count);    
+    
+    for (uint32_t i = 0; i < count; i++) {
+        names.push_back( extensions[i] );
+    }
+}
+
+#endif

@@ -1,4 +1,5 @@
 #include "logger.hpp"
+#include "assertion.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 static bool isInitialized = false; 
@@ -29,4 +30,9 @@ void shutdownLogger()
 {
 	coreLogger.reset();
 	clientLogger.reset();
+}
+
+IRL_API void report_assertion_failure(const char* expression, const char* message, const char* file, int32_t line)
+{
+	CORE_LOG_CRITICAL("Assertion Failure: {}, message: '{}', in file: {}, line: {}\n", expression, message, file, line);
 }

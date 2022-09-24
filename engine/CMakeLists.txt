@@ -1,5 +1,8 @@
 project(Engine LANGUAGES C CXX)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_RELEASE")
+
 file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "src/*/*/*/*.cpp")
 
 add_library(Engine SHARED ${SOURCES})
@@ -24,11 +27,8 @@ target_link_libraries(Engine
         Vulkan::Vulkan
 )
 
-#set_property(TARGET Engine PROPERTY CXX_STANDARD 17)
-#set_property(TARGET Engine PROPERTY C_STANDARD 17)
-
-#$<INSTALL_INTERFACE:include>
-#$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-
-#${Vulkan_LIBRARIES}
-#${Vulkan_INCLUDE_DIRS}
+target_compile_definitions(Engine
+    PRIVATE
+        -DUSE_GLFW
+    PUBLIC
+        )

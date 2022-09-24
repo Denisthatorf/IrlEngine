@@ -138,6 +138,7 @@ bool application_run()
     app_state.is_running = false;
 	
 	window_destroy(&app_state.app_window);
+    renderer_shutdown();
 	shutdownLogger();
 
     return true;
