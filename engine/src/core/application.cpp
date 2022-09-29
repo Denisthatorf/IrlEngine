@@ -1,17 +1,15 @@
 #include "application.hpp"
 #include "game_types.hpp"
 
+#include <utils/irl_general_allocator.hpp>
+
 #include <core/logger.hpp>
 #include <core/app_clock.hpp>
 
 #include <platform/window.hpp>
 #include <platform/platform.hpp>
 
-#include <core/app_clock.hpp>
 #include <renderer/renderer_frontend.hpp>
-
-//TODO: think more
-//#include <utils/irl_general_allocator.hpp>
 
 struct application_state {
     game* game_inst;
@@ -131,9 +129,6 @@ bool application_run()
         }
     }
 
-	//TODO: check allocations
-    //if(get_general_allocationsNow() > 0)
-    //    CORE_LOG_WARN("Forger to deallocate smth");
 
     app_state.is_running = false;
 	
@@ -141,5 +136,8 @@ bool application_run()
     renderer_shutdown();
 	shutdownLogger();
 
+    if(get_general_allocationsNow() > 0)
+        CORE_LOG_WARN("Forger to deallocate smth");
+        
     return true;
 } 

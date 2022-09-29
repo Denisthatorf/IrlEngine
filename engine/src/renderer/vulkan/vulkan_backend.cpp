@@ -2,6 +2,7 @@
 
 #include "vulkan_types.hpp"
 #include "vulkan_platform.hpp"
+#include "vulkan_device.hpp"
 
 #include "core/logger.hpp"
 #include <vector>
@@ -79,7 +80,7 @@ bool vulkan_renderer_backend_initialize(renderer_backend* backend, const char* a
         }
 
         if (!found) {
-            CORE_LOG_DEBUG("Required validation layer is missing: %s", required_validation_layer_names[i]);
+            CORE_LOG_DEBUG("Required validation layer is missing: {}", required_validation_layer_names[i]);
             return false;
         }
     }
@@ -111,12 +112,38 @@ bool vulkan_renderer_backend_initialize(renderer_backend* backend, const char* a
     CORE_LOG_DEBUG("Vulkan debugger created.");
 #endif
 
+
+    // Surface
+    CORE_LOG_DEBUG("Creating Vulkan surface...");
+    if (!window_create_vulkan_surface(window, &context)) {
+        CORE_LOG_ERROR("Failed to create platform surface!");
+        return false;
+    }
+    CORE_LOG_DEBUG("Vulkan surface created.");
+
+    // Device creation
+    if (!vulkan_device_create(&context)) {
+        CORE_LOG_ERROR("Failed to create device!");
+        return false;
+    }
+
+
+
     CORE_LOG_DEBUG("Vulkan renderer initialized successfully.");
     return true;
 }
 
 void vulkan_renderer_backend_shutdown(renderer_backend* backend)
 {
+    CORE_LOG_DEBUG("Destroying Vulkan device...");
+    vulkan_device_destroy(&context);
+
+    CORE_LOG_DEBUG("Destroying Vulkan surface...");
+    if (context.surface) {
+        vkDestroySurfaceKHR(context.instance, context.surface, context.allocator);
+        context.surface = 0;
+    }
+
     #ifdef _DEBUG 
     CORE_LOG_DEBUG("Destroying Vulkan debugger...");
     if (context.debug_messenger) {
@@ -128,7 +155,6 @@ void vulkan_renderer_backend_shutdown(renderer_backend* backend)
 
     CORE_LOG_DEBUG("Destroying Vulkan instance...");
     vkDestroyInstance(context.instance, context.allocator);
-
 }
 
 void vulkan_renderer_backend_on_resized(renderer_backend* backend, uint16_t width, uint16_t height) {

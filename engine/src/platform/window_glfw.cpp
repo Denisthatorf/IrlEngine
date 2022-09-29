@@ -1,10 +1,11 @@
 #include "window.hpp"
-#include <cstdint>
 
 #ifdef USE_GLFW
 
-#include <cstdlib>
+#include <renderer/vulkan/vulkan_types.hpp>
 #include <renderer/vulkan/vulkan_platform.hpp>
+
+#include <core/logger.hpp>
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -64,6 +65,19 @@ void window_get_required_extension_names(std::vector<const char*>& names) {
     for (uint32_t i = 0; i < count; i++) {
         names.push_back( extensions[i] );
     }
+}
+
+bool window_create_vulkan_surface(window *window, vulkan_context *context)
+{
+    internal_state *state = (internal_state *)window->internal_state;
+    VkResult err = glfwCreateWindowSurface(context->instance, state->glfw_window, NULL, &context->surface);
+    if (err != VK_SUCCESS)
+    {
+        CORE_LOG_CRITICAL("Can't create vulkan window surfase");
+        return false;
+    }
+
+    return true;
 }
 
 #endif

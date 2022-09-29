@@ -34,8 +34,36 @@ namespace irl
             minus_general_allocation_num(numObjects);
             operator delete(p);
         }
-    };
 
+        
+    };
+    template<typename T>
+    T* general_allocate()
+    {
+        add_general_allocation_num(1);
+        return static_cast<T*>(operator new(sizeof(T)));
+    }
+
+    template<typename T>
+    T* general_allocate(size_t numObjects)
+    {
+        add_general_allocation_num(numObjects);
+        return static_cast<T*>(operator new(sizeof(T) * numObjects));
+    }
+
+    template<typename T>
+    void general_deallocate(T* p)
+    {
+        minus_general_allocation_num(1);
+        delete p;
+    }
+
+    template<typename T>
+    void general_deallocate(T* p, size_t numObjects)
+    {
+        minus_general_allocation_num(numObjects);
+        delete[] p;
+    }
 } // namespace irl
 
 IRL_API size_t get_all_general_allocations();
