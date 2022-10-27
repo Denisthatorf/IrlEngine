@@ -4,28 +4,16 @@
 #include <core/logger.hpp>
 #include <game_types.hpp>
 
-// Externally-defined function to create a game.
-extern bool create_game(game* out_game);
+extern Game* create_game();
 
 /**
  * The main entry point of the application.
  */
 int main(void) {
-    // Request the game instance from the application.
-    game game_inst;
-    if (!create_game(&game_inst)) {
-        CORE_LOG_CRITICAL("Could not create game!");
-        return -1;
-    }
-
-    // Ensure the function pointers exist.
-    if (!game_inst.render || !game_inst.update || !game_inst.initialize || !game_inst.on_resize) {
-        CORE_LOG_CRITICAL("The game's function pointers must be assigned!");
-        return -2;
-    }
+    Game* game_inst = create_game();
 
     // Initialization.
-    if (!application_create(&game_inst)) {
+    if (!application_create(game_inst)) {
         CORE_LOG_DEBUG("Application failed to create!.");
         return 1;
     }
@@ -35,6 +23,8 @@ int main(void) {
         CORE_LOG_DEBUG("Application did not shutdown gracefully.");
         return 2;
     }
+
+    delete game_inst;
 
     return 0;
 } 

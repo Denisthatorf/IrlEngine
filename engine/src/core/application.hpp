@@ -2,7 +2,7 @@
 
 #include <defines.hpp> 
 
-struct game;
+class Game;
 
 // Application configuration.
 struct application_config
@@ -17,6 +17,6 @@ struct application_config
 };
 
 
-IRL_API bool application_create(struct game* game_inst);
+IRL_API bool application_create(Game* game_inst);
 
 IRL_API bool application_run();

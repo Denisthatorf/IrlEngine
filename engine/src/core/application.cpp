@@ -12,7 +12,7 @@
 #include <renderer/renderer_frontend.hpp>
 
 struct application_state {
-    game* game_inst;
+    Game* game_inst;
 	window app_window;
     bool is_running;
     bool is_suspended;
@@ -26,7 +26,7 @@ struct application_state {
 static bool isInitialized = false;
 static application_state app_state;
 
-bool application_create(game* game_inst)
+bool application_create(Game* game_inst)
 {
     if (isInitialized) 
     {
@@ -59,7 +59,7 @@ bool application_create(game* game_inst)
     }
 
     // Initialize the game.
-    if (!app_state.game_inst->initialize(app_state.game_inst)) {
+    if (!app_state.game_inst->Initialize()) {
         CORE_LOG_CRITICAL("Game failed to initialize.");
         return false;
     }
@@ -91,14 +91,14 @@ bool application_run()
 
         if(!app_state.is_suspended)
 		{
-            if (!app_state.game_inst->update(app_state.game_inst, delta)) 
+            if (!app_state.game_inst->Update(delta)) 
 			{
                 CORE_LOG_CRITICAL("Game update failed, shutting down.");
                 app_state.is_running = false;
                 break;
             }
 
-            if (!app_state.game_inst->render(app_state.game_inst, delta))
+            if (!app_state.game_inst->Render(delta))
 			{
                 CORE_LOG_CRITICAL("Game render failed, shutting down.");
                 app_state.is_running = false;
