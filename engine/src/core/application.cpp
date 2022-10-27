@@ -9,7 +9,7 @@
 #include <platform/window.hpp>
 #include <platform/platform.hpp>
 
-#include <renderer/renderer_frontend.hpp>
+#include <renderer/renderer.hpp>
 
 struct application_state {
     Game* game_inst;

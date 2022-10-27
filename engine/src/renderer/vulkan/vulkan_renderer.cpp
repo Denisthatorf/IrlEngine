@@ -1,4 +1,4 @@
-#include "vulkan_backend.hpp"
+#include "vulkan_renderer.hpp"
 
 #include "vulkan_types.hpp"
 #include "vulkan_platform.hpp"
@@ -18,7 +18,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vk_debug_callback(
     void* user_data);
 
 //TODO: refactor
-bool vulkan_renderer_backend_initialize(renderer_backend* backend, const char* application_name, struct window* window) {
+bool vulkan_renderer::initialize(const char* application_name, struct window* window) {
     // TODO: custom allocator.
     context.allocator = 0;
 
@@ -133,7 +133,7 @@ bool vulkan_renderer_backend_initialize(renderer_backend* backend, const char* a
     return true;
 }
 
-void vulkan_renderer_backend_shutdown(renderer_backend* backend)
+void vulkan_renderer::shutdown()
 {
     CORE_LOG_DEBUG("Destroying Vulkan device...");
     vulkan_device_destroy(&context);
@@ -157,14 +157,14 @@ void vulkan_renderer_backend_shutdown(renderer_backend* backend)
     vkDestroyInstance(context.instance, context.allocator);
 }
 
-void vulkan_renderer_backend_on_resized(renderer_backend* backend, uint16_t width, uint16_t height) {
+void vulkan_renderer::resized(uint16_t width, uint16_t height) {
 }
 
-bool vulkan_renderer_backend_begin_frame(renderer_backend* backend, float delta_time) {
+bool vulkan_renderer::begin_frame(float delta_time) {
     return true;
 }
 
-bool vulkan_renderer_backend_end_frame(renderer_backend* backend, float delta_time) {
+bool vulkan_renderer::end_frame(float delta_time) {
     return true;
 }
 
