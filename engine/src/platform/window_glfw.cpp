@@ -2,13 +2,17 @@
 
 #ifdef USE_GLFW
 
+#include <GL/glew.h>
+#include <renderer/opengl/opengl_platform.hpp>
+
 #include <renderer/vulkan/vulkan_types.hpp>
 #include <renderer/vulkan/vulkan_platform.hpp>
 
-#include <core/logger.hpp>
-
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
+
+#include <core/logger.hpp>
+
 
 struct internal_state {
 	GLFWwindow* glfw_window;
@@ -26,15 +30,31 @@ bool window_create(
     window->internal_state = malloc(sizeof(internal_state));
     internal_state* state = (internal_state*)window->internal_state;
 
-    glfwInit();
+    if(!glfwInit())
+        return false;
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    //TODO: check why is it an error
+    //glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    state->glfw_window = glfwCreateWindow(width, height, application_name, NULL, nullptr);
+    // uncomment these lines if on Apple OS X
+    /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);*/
+
+
+    //TODO: make it on opengl only
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //TODO: make it on mac only
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+    state->glfw_window = glfwCreateWindow(width, height, application_name, NULL, NULL);
 
 	//TODO: set window callback
-    if(state->glfw_window == nullptr)
+    if(!state->glfw_window)
         return false;
 
 	return true;
@@ -81,3 +101,9 @@ bool window_create_vulkan_surface(window *window, vulkan_context *context)
 }
 
 #endif
+
+void window_set_opengl_context(window* window)
+{
+    internal_state *state = (internal_state *)window->internal_state;
+    glfwMakeContextCurrent(state->glfw_window);
+}

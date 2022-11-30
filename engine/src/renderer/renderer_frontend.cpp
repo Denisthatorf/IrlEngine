@@ -1,5 +1,6 @@
 #include "renderer_frontend.hpp"
 
+#include "renderer/renderer_types.hpp"
 #include "renderer_backend.hpp"
 
 #include "core/logger.hpp"
@@ -14,7 +15,7 @@ bool renderer_initialize(const char* application_name, struct window* window) {
     backend = new renderer_backend(); 
 
     // TODO: make this configurable.
-    renderer_backend_create(RENDERER_BACKEND_TYPE_VULKAN, window, backend);
+    renderer_backend_create(RENDERER_BACKEND_TYPE_OPENGL, window, backend);
     backend->frame_number = 0;
 
     if (!backend->initialize(backend, application_name, window)) {
